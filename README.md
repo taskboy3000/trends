@@ -1,6 +1,6 @@
 *Taskboy Trends*
 
-An activity aggregator and reporter.
+An activity aggregator and reporter.  Live version: http://trends.taskboy.com/
 
 Author: Joe Johnston <jjohn@taskboy.com>
 
