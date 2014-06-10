@@ -54,17 +54,17 @@
 
     <div id="aggregates" class="page-section">
       <div class="container">
-        <h3>Aggregate Trends</h3>
+        <h3>Aggregate Trends for This Week</h3>
         
         <div class="row">
-          <div class="col-md-6">
-            <h3>Top 5 Technologies This Week</h3>
+          <div class="col-md-4">
+            <h3>Top 5 Technologies</h3>
         
             <div id="top-five-techs-last-week"></div>
           </div>
 
-          <div class="col-md-6">
-            <h3>Top Technologies This Week</h3>
+          <div class="col-md-4">
+            <h3>Top Technologies</h3>
         
             <div id="all-projects-last-week">
               <ol>
@@ -96,6 +96,31 @@
             </div>
           </div>
 
+          <div class="col-md-4">
+            <div>
+              <h3>Freecode Top Categories</h3>
+
+              <script type="text/template" id="tmpl-top-fc-categories">
+              <li><a target="_blank" href="http://freecode.com/tags/<%= category.replace(" ", "-") %>?sort=created"><%= category %></a></li>
+              </script>
+
+              <div id="freecode-top-categories">
+                <ol></ol>
+              </div>
+            </div>
+            
+            <div>
+              <h3>Recently Active Github Projects</h3>
+              <script type="text/template" id="tmpl-github-projects">
+              <li><a target="_blank" href="http://github.com/<%= project %>"><%= project %></a></li>
+              </script>
+
+              <div id="github-top-projects">
+                <ol></ol>
+              </div>
+              
+            </div>
+          </div>
 
         </div>
 

@@ -12,6 +12,7 @@ $(document).ready(function()
         google.load("visualization", "1.0", { packages : [ 'corechart' ],
                                               callback : function() 
           { 
+// begin callbacks
             $.ajax({
                url : "/api/data/changes/tech_this_week.json",
                success: function(d)
@@ -28,10 +29,29 @@ $(document).ready(function()
                         }
                    });
         
-            } 
-                                                         
-         }
-       );
+            $.ajax({
+                     url: "/api/data/fc/tags_this_week.json",    
+                     success: function(d)
+                              {
+                                paint_top_fc_categories(d, document.getElementById("freecode-top-categories"));
+                              }
+                   });
+
+            $.ajax({
+                    url: "/api/data/github/projects_this_week.json",
+                    success: function(d)
+                             {
+                                paint_recent_github_projects(d, document.getElementById("github-top-projects"));
+                             }
+                    });
+
+
+// end callbacks
+                
+                             
+          }
+        }
+        );
    });   
 
    function paint_top_techs(d, target)
@@ -265,6 +285,25 @@ $(document).ready(function()
         }       
    }
 
+   function paint_top_fc_categories(d, target)
+   {
+        var tmpl = _.template($("#tmpl-top-fc-categories").html());
+        for (var i=0; i < d.length; i++)
+        {
+           var str = tmpl({ category: d[i].name });
+           $(target).find("ol").append(str);
+        }
+   }  
 
+   function paint_recent_github_projects(d, target)
+   {
+        var tmpl = _.template($("#tmpl-github-projects").html());
+        for (var i=0; i < d.length; i++)
+        {
+           var str = tmpl({ project: d[i].project_name });
+           $(target).find("ol").append(str);
+        }
+   }  
 
 });
+ 

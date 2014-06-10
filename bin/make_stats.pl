@@ -12,7 +12,7 @@ use FindBin;
 require "$FindBin::Bin/db.pl";
 use Getopt::Std;
 my %Opts;
-getopts('t?', \%Opts);
+getopts('fgmt?', \%Opts);
 
 my $data_dir = "/home/jjohnston/sites/trends/www/api";
 
@@ -22,9 +22,32 @@ if ($Opts{t})
     print "Terms made\n";
     exit;
 }
+my $top_fc_tags = make_this_weeks_fc_top_tags();
+write_json("$data_dir/data/fc/tags_this_week.json", $top_fc_tags);
+if ($Opts{f})
+{
+    print "Top Freecode tags\n";
+    exit;
+}
+
+my $github_recent_projects = make_this_weeks_github_projects();
+write_json("$data_dir/data/github/projects_this_week.json", $github_recent_projects);
+if ($Opts{g})
+{
+    print "Recent Github projects\n";
+    exit;
+}
 
 my ($merged_top_ten) = get_this_weeks_tech_trends();
 write_json("$data_dir/data/merged/this_week.json", $merged_top_ten) if $merged_top_ten;
+
+# Do all of the top techs have metadata?
+report_missing_metadata($merged_top_ten);
+
+if ($Opts{m})
+{
+    exit;
+}
 
 my $changes = get_change_in_tech_last_week($merged_top_ten);
 write_json("$data_dir/data/changes/tech_this_week.json", $changes);
@@ -459,3 +482,81 @@ sub write_json
     close $out;
 }
 
+sub report_missing_metadata
+{
+    my ($top_tech) = @_;
+    my $dbh = get_dbh();
+    my $sth = $dbh->prepare("SELECT id FROM technology_metadata WHERE technology=?");
+    for my $r (@$top_tech)
+    {
+        my $name = $r->{name};
+        unless ($sth->execute($name))
+        {
+            warn($sth->{Statement});
+            return;
+        }
+        
+        unless ($sth->rows)
+        {
+            warn("Unknown technology: $name\n");
+        }
+    }
+}
+
+sub make_this_weeks_fc_top_tags
+{
+    my $dbh = get_dbh();
+    my $sth = $dbh->prepare("select * from view_fc_top_tags_this_week order by c DESC limit 10 ");
+    unless ($sth->execute())
+    {
+        warn($sth->{Statement});
+        return;
+    }
+    return $sth->fetchall_arrayref({});
+}
+
+sub make_this_weeks_github_projects
+{
+    my $dbh = get_dbh();
+
+    my $rows = $dbh->selectall_arrayref("SELECT name FROM view_gh_most_active_projects_this_week ORDER BY c DESC LIMIT 20");
+    my @project_names;
+    for my $r (@$rows)
+    {
+        push @project_names, $dbh->quote($r->[0]);
+    }
+
+    my $sql = sprintf("select * from view_gh_most_active_projects_with_tags WHERE project_name IN (%s) order by c DESC limit 500", join(",", @project_names));
+
+    my $sth = $dbh->prepare($sql);
+
+    unless ($sth->execute())
+    {
+        warn($sth->{Statement});
+        return;
+    }
+
+    my @projects;
+    my $cnt = 0;
+    while (my $hr = $sth->fetchrow_hashref())
+    {
+        if ($projects[-1] && $projects[-1]->{project_name} eq $hr->{project_name})
+        {
+            push @{ $projects[-1]->{tags} }, $hr->{tag_name};
+        }
+        else
+        {
+            $cnt += 1;
+            if ($cnt > 10)
+            {
+                last;
+            }
+            push @projects, { project_name => $hr->{project_name},
+                              tags => [ $hr->{tag_name} ],
+                            };
+        }
+    }
+    
+    return \@projects;
+    
+}
