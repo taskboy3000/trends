@@ -1,0 +1,10 @@
+<div id="tmpl-sign-up">
+  <div class=modal-header">
+    <form name="form-sign-up">
+      <p> 
+        <label for="email">Email:</label>
+        <input type="text" name="email" placeholder="you@example.com">
+      </p>
+    </form>
+  </div>
+</div>

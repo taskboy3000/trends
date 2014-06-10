@@ -1,0 +1,5 @@
+1. Show aggregate technology trends across all sites for 1 week
+
+2. Report change in tech trends from previous week
+
+3. Breakdown of activity per site that week

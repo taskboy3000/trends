@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Taskboy Tech Trends</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A free online tool to analyze technical trends in computer programming languages and other software">
+    <meta name="author" content="Joe Johnston">   
+ 
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/frontpage.css">
+
+  </head>
+  <body>
+
+    <!-- nav -->
+    <div class="header">
+      <div class="container">
+        <nav class="navbar navbar-inverse" role="navigator">
+          <div class="navbar-header">
+            <button type="button btn-navbar" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand scroll-top">Taskboy Trends</a>
+          </div>
+        
+          <div id="main-nav" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="#" class="scroll-link" data-id="aggregates">Aggregates</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech1">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech2">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech3">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech4">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech5">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech6">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech7">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech8">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech9">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="tech10">...</a></li>
+              <li><a href="#" class="scroll-link" data-id="about">About</a></li>
+            </ul>
+          </div> <!-- end main-nav -->
+        </nav>
+      </div>  
+    </div>
+
+    <div class="page-section" id="introduction">
+      <div class="container intro-page">
+        <h1>Taskboy Tech Trends</h1>
+        <p>What in the world is going on with <a href="#" class="scroll-link" data-id="aggregates">technology</a>?</p>
+      </div>
+    </div>
+
+    <div id="aggregates" class="page-section">
+      <div class="container">
+        <h3>Aggregate Trends</h3>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h3>Top 5 Technologies This Week</h3>
+        
+            <div id="top-five-techs-last-week"></div>
+          </div>
+
+          <div class="col-md-6">
+            <h3>Top Technologies This Week</h3>
+        
+            <div id="all-projects-last-week">
+              <ol>
+                <script type="text/template" id="tmpl-top-tech-this-week">
+                <li>
+                <span title="Change from last week: <%= change %>" class="tech_change <%= change %>"><% 
+                if (change == "none")
+                {
+                   print("&ominus;");
+                }
+                else if (change == "new")
+                {
+                   print("&star;");
+                }
+                else if (change == "up")
+                {
+                  print("&#8657;");
+                }
+                else
+                {
+                  print("&#8659;");
+                }
+                %></span>
+                &nbsp;
+                <a href="#" class="scroll-link" data-id="<%= link %>"><%= name %></a>
+                </li>
+                </script>
+              </ol>
+            </div>
+          </div>
+
+
+        </div>
+
+        <p><a href="#" class="scroll-top back-to-top">&uarr;</a></p>
+      </div>
+    </div>
+
+    <script id="tmpl-tech-block" type="text/template">
+      <div id="<%= id %>" class="page-section">
+        <div class="container">
+          <h3><%= name %></h3>
+          <div class="row">
+            <div class="col-md-6">
+              <h4>About this technology</h4>
+              <% if (blurb) { %>
+              <p data-role="blurb"><span class="quote">&ldquo;</span><%= blurb %><span class="quote">&rdquo;</span></p>
+              <p><a href="<%= wikipedia_url %>" target="_blank" data-role="wikipedia_url">-- from Wikipedia</a></p>
+              <% } %>
+          
+              <% if (homepage) { %>
+              <p><a href="<%= homepage %>" target="_blank" data-role="url">Project homepage</a></p>
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <h4>Six week activity</h4>
+              <div id="six-week-<%= id %>" data-role="six-week-tech" data-term="<%= name %>"></div>
+            </div>
+          </div>    
+          <p><a href="#" class="scroll-agg back-to-top">&uarr;</a></p>
+        </div>
+      </div>
+    </script>
+
+    <div id="list-tech"></div>
+
+    <div id="about" class="page-section">
+      <div class="container">
+        <h3>About</h3>
+        <p>Taskboy Trends is an ongoing research project by <a href="http://taskboy.com/">Taskboy</a>. Public usage data from <a href="http://stackoverflow.com/">StackOverflow</a>, <a href="http://freecode.com/">Freecode</a> and <a href="http://github.com/">GitHub</a> are processed to produce an aggregate picture of which technologies are being used to create software.</p>
+
+        <p>Copyright &copy; Joe Johnston. All rights reserved.<p>
+
+        <p><a href="#" class="scroll-agg back-to-top">&uarr;</a></p>
+      </div>
+    </div>
+    
+    <!-- includes at the bottom -->
+    <div id="scripts">
+      <script type="text/javascript" src="/js/jquery.min.js"></script>
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="/js/underscore-min.js"></script>
+      <script type="text/javascript" src="/js/backbone-min.js"></script>
+      <script type="text/javascript" src="/js/nav.js"></script>
+      <script type="text/javascript" src="/js/graphs.js"></script>
+      <script type="text/javascript" src="/js/frontpage.js"></script>
+    </div>
+
+    <script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9967048-3', 'taskboy.com');
+  ga('send', 'pageview');
+
+    </script>
+    <script type="text/template" id="tmpl-notice">
+        <div class="alert alert-info">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <strong><%= msg %></strong>
+        </div>
+    </script>
+    </div>
+  </body>
+</html>
