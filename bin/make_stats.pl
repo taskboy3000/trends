@@ -10,10 +10,19 @@ use File::Basename;
 use URI::Escape;
 use FindBin;
 require "$FindBin::Bin/db.pl";
+use Getopt::Std;
+my %Opts;
+getopts('t?', \%Opts);
 
 my $data_dir = "/home/jjohnston/sites/trends/www/api";
 
 make_terms("$data_dir/data/terms");
+if ($Opts{t})
+{
+    print "Terms made\n";
+    exit;
+}
+
 my ($merged_top_ten) = get_this_weeks_tech_trends();
 write_json("$data_dir/data/merged/this_week.json", $merged_top_ten) if $merged_top_ten;
 

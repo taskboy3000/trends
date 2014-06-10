@@ -10,7 +10,8 @@ $(document).ready(function()
    {
 
         google.load("visualization", "1.0", { packages : [ 'corechart' ],
-                                              callback : function() { 
+                                              callback : function() 
+          { 
             $.ajax({
                url : "/api/data/changes/tech_this_week.json",
                success: function(d)
@@ -25,13 +26,12 @@ $(document).ready(function()
                         {
                            paint_top_five_techs_chart(d, document.getElementById("top-five-techs-last-week"));
                         }
-            });
+                   });
         
-
-                                                                    } 
+            } 
                                                          
-                                            }
-        );
+         }
+       );
    });   
 
    function paint_top_techs(d, target)
@@ -110,16 +110,26 @@ $(document).ready(function()
                                 var data = new google.visualization.DataTable();
                                 data.addColumn("string", "Date");
                                 data.addColumn("number", "Count");
-                                for (var i=0; i < d.length - 1; i++) 
+                                var sum = 0;
+                                var min = 1000000;
+                                for (var i=0; i < d.length; i++) 
                                 {
                                    var val = parseInt(d[i].count);
+                                   sum += val;
+                                   if (val < min)
+                                   {
+                                        min = val;
+                                   }
                                    var date = d[i].date;
-                                   data.addRows([
+                                   data.addRow(
                                                   [
                                                     date, val,
                                                   ]
-                                   ]);
+                                   );
                                 }
+                                var avg = sum / d.length;
+                                var vBaseline = parseInt(avg - parseInt(avg * 0.2));
+                                min = parseInt(min - (min * 0.2));
 
                                 var options = {
                                     title : "",
@@ -128,7 +138,7 @@ $(document).ready(function()
                                     legend: 'none',
                                     curveType: 'function',
                                     colors: [ '#39f' ],
-                                    vAxis: { ticks: 'none' },
+                                    vAxis: { ticks: 'none', baseline: min },
                                     hAxis: { slantedText: true },
                                     chartArea: { top:20,right:0,bottom:0,left:60 },
                                 };
@@ -136,7 +146,7 @@ $(document).ready(function()
                                 var target = $("[data-term='" + term + "']").get(0);
                                 if (target)
                                 {
-                                   var chart = new google.visualization.ColumnChart(target);
+                                   var chart = new google.visualization.LineChart(target);
                                    chart.draw(data, options);
                                 }
                                 else
