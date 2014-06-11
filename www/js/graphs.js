@@ -300,7 +300,8 @@ $(document).ready(function()
         var tmpl = _.template($("#tmpl-github-projects").html());
         for (var i=0; i < d.length; i++)
         {
-           var str = tmpl({ project: d[i].project_name });
+           var tags = d[i].tags.join(", ");
+           var str = tmpl({ project: d[i].project_name, tags: tags});
            $(target).find("ol").append(str);
         }
    }  
