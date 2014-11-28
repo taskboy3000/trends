@@ -22,13 +22,13 @@ if ($Opts{t})
     print "Terms made\n";
     exit;
 }
-my $top_fc_tags = make_this_weeks_fc_top_tags();
-write_json("$data_dir/data/fc/tags_this_week.json", $top_fc_tags);
-if ($Opts{f})
-{
-    print "Top Freecode tags\n";
-    exit;
-}
+#my $top_fc_tags = make_this_weeks_fc_top_tags();
+#write_json("$data_dir/data/fc/tags_this_week.json", $top_fc_tags);
+#if ($Opts{f})
+#{
+#    print "Top Freecode tags\n";
+#    exit;
+#}
 
 my $github_recent_projects = make_this_weeks_github_projects();
 write_json("$data_dir/data/github/projects_this_week.json", $github_recent_projects);
@@ -253,30 +253,6 @@ LIMIT 20
   LIMIT 20 
                 ];
 
-    $start_date_criteria = $end_date_criteria = "";
-    if ($end_date)
-    {
-        $start_date_criteria = sprintf(" AND fcp.issued >= '%s 00:00:00' ", $from_date);
-        $end_date_criteria = sprintf(" AND fcp.issued <= '%s 23:59:59'", $end_date);
-    }
-    else
-    {
-        $start_date_criteria = sprintf(" AND fcp.issued >= DATE_SUB('%s 00:00:00', INTERVAL 1 WEEK)", $from_date);
-    }
-
-    push @sql, qq[select t.`name`,count(*) as c 
-  FROM fc_projects as fcp 
-    LEFT JOIN fc_projects_tags AS fct ON fcp.`id`=fct.`project_id`  
-      LEFT JOIN so_tags AS t ON fct.tag_id=t.id  
- WHERE  
-   t.name IS NOT NULL 
-   AND $term_criteria
-   $start_date_criteria $end_date_criteria
-   GROUP BY (t.name)
-   ORDER BY c DESC
-   LIMIT 20
-                ];
-
     my @data;
     for my $s (@sql)
     {
@@ -288,7 +264,6 @@ LIMIT 20
         }
         push @data, $sth->fetchall_arrayref({});
     }
-
     
     return \@data;
 }
@@ -428,43 +403,6 @@ sub get_weekly_tech_trends
     return \@tmp, \@merged;
 }
 
-sub get_fc_projects_updated
-{
-    my ($num, $type) = @_;
-
-    
-    my $dbh = get_dbh();
-
-    my @found;
-    while ($num)
-    {
-        
-        my $sql = sprintf("SELECT count(*) AS c 
-                           FROM fc_projects 
-                           WHERE 
-               issued >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL %d %s)
-               AND issued < DATE_SUB(CURRENT_TIMESTAMP, INTERVAL %d %s)
-                           ",
-                          $num,
-                          $type,
-                          $num - 1,
-                          $type
-                         );
-        
-        my $sth = $dbh->prepare($sql);
-        unless ($sth->execute())
-        {
-            warn($sth->{Statement});
-            return;
-        }
-        
-        my ($count) = $sth->fetchrow_array();
-        push @found, $count;
-        $num--;
-    }
-
-    return \@found;
-}
 
 sub write_json
 {
@@ -503,17 +441,6 @@ sub report_missing_metadata
     }
 }
 
-sub make_this_weeks_fc_top_tags
-{
-    my $dbh = get_dbh();
-    my $sth = $dbh->prepare("select * from view_fc_top_tags_this_week order by c DESC limit 10 ");
-    unless ($sth->execute())
-    {
-        warn($sth->{Statement});
-        return;
-    }
-    return $sth->fetchall_arrayref({});
-}
 
 sub make_this_weeks_github_projects
 {
